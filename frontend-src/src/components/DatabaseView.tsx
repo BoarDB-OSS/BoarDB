@@ -1223,14 +1223,7 @@ function DatabaseView(): JSX.Element {
     );
   };
 
-  if (!dbStatus.connected) {
-    return (
-      <Container>
-        <Title>🗄️ Database Management</Title>
-        <LoginForm onConnect={checkDbStatus} />
-      </Container>
-    );
-  }
+  // 더 이상 여기서 로그인 처리를 하지 않음. App.tsx에서 처리됨
 
   return (
     <Container>

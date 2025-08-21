@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import MetricsView from "./components/MetricsView";
 import DatabaseView from "./components/DatabaseView";
+import AccessPage from "./components/AccessPage";
+import { databaseAPI } from "./services/api";
 
 interface SystemStats {
   cpu: number;
@@ -384,8 +386,12 @@ const TagBadge = styled.span<{ color: string }>`
   font-weight: 500;
 `;
 
-function App(): JSX.Element {
-  const [currentPath, setCurrentPath] = useState<string>("/");
+function AppContent(): JSX.Element {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [currentPath, setCurrentPath] = useState<string>(location.pathname);
+  const [dbConnected, setDbConnected] = useState<boolean>(false);
+  const [checkingConnection, setCheckingConnection] = useState<boolean>(true);
   const [systemStats, setSystemStats] = useState<SystemStats>({
     cpu: 46,
     memory: 74,
@@ -479,6 +485,36 @@ function App(): JSX.Element {
     },
   ]);
   const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
+
+  useEffect(() => {
+    setCurrentPath(location.pathname);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    checkDbConnection();
+  }, []);
+
+  useEffect(() => {
+    if (!checkingConnection && !dbConnected && location.pathname !== '/access') {
+      navigate('/access');
+    }
+  }, [checkingConnection, dbConnected, location.pathname, navigate]);
+
+  const checkDbConnection = async () => {
+    try {
+      const response = await databaseAPI.getStatus();
+      setDbConnected(response.data.connected);
+    } catch (error) {
+      setDbConnected(false);
+    } finally {
+      setCheckingConnection(false);
+    }
+  };
+
+  const handleConnect = () => {
+    setDbConnected(true);
+    navigate('/');
+  };
 
   useEffect(() => {
     // Simulate real-time data updates
@@ -673,12 +709,20 @@ function App(): JSX.Element {
     );
   };
 
+  // /access 페이지일 때는 헤더 없이 표시
+  if (location.pathname === '/access') {
+    return (
+      <Routes>
+        <Route path="/access" element={<AccessPage onConnect={handleConnect} />} />
+      </Routes>
+    );
+  }
+
   return (
-    <Router>
-      <Container>
-        <Header>
-          <Logo>BoarDB</Logo>
-          <NavTabs>
+    <Container>
+      <Header>
+        <Logo>BoarDB</Logo>
+        <NavTabs>
             <NavTab
               to="/"
               active={currentPath === "/"}
@@ -704,11 +748,38 @@ function App(): JSX.Element {
         </Header>
 
         <Routes>
-          <Route path="/" element={renderDashboard()} />
-          <Route path="/database" element={<DatabaseView />} />
-          <Route path="/api-usage" element={<MetricsView />} />
+          <Route path="/" element={
+            checkingConnection ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: 'white' }}>
+                <div>🔄 Checking database connection...</div>
+              </div>
+            ) : dbConnected ? renderDashboard() : <Navigate to="/access" replace />
+          } />
+          <Route path="/database" element={
+            checkingConnection ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: 'white' }}>
+                <div>🔄 Checking database connection...</div>
+              </div>
+            ) : dbConnected ? <DatabaseView /> : <Navigate to="/access" replace />
+          } />
+          <Route path="/api-usage" element={
+            checkingConnection ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: 'white' }}>
+                <div>🔄 Checking database connection...</div>
+              </div>
+            ) : dbConnected ? <MetricsView /> : <Navigate to="/access" replace />
+          } />
         </Routes>
       </Container>
+  );
+}
+
+function App(): JSX.Element {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/*" element={<AppContent />} />
+      </Routes>
     </Router>
   );
 }
