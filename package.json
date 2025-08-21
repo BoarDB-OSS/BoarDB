@@ -4,11 +4,25 @@
   "description": "Developer tool for API monitoring and database management with TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "frontend",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baesungjoon/boardb.git"
+  },
+  "bugs": {
+    "url": "https://github.com/baesungjoon/boardb/issues"
+  },
+  "homepage": "https://github.com/baesungjoon/boardb#readme",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run build-frontend",
+    "build-backend": "tsc",
     "dev": "ts-node example/test-server.ts",
     "example": "ts-node example/test-server.ts",
-    "build-frontend": "cd frontend-src && npm run build",
+    "build-frontend": "cd frontend-src && npm run build && cp -r build ../frontend",
     "test": "echo \"No tests specified\"",
     "prepublishOnly": "npm run build"
   },
@@ -20,7 +34,7 @@
     "express",
     "developer-tools"
   ],
-  "author": "",
+  "author": "baesungjoon",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.11.0",

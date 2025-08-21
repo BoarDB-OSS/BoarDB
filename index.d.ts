@@ -1,4 +1,4 @@
-import BoardB from "./src/core/BoardB";
-export default BoardB;
+import BoarDB from "./src/core/BoarDB";
+export default BoarDB;
 export * from "./src/types";
-export { BoardB };
+export { BoarDB };
