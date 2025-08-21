@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { databaseAPI } from '../services/api';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { databaseAPI } from "../services/api";
 
 interface AccessPageProps {
   onConnect: () => void;
 }
 
 const Container = styled.div`
-  background-color: #2E1F13;
+  background-color: #2e1f13;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 `;
 
 const AccessCard = styled.div`
-  background-color: #3E2F23;
+  background-color: #3e2f23;
   border-radius: 12px;
   padding: 40px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 500px;
-  border: 1px solid #4A3B2F;
+  border: 1px solid #4a3b2f;
 `;
 
 const Title = styled.h1`
@@ -32,11 +32,15 @@ const Title = styled.h1`
   margin-bottom: 10px;
   font-size: 32px;
   font-weight: bold;
-  
-  &:before {
-    content: '🗄️';
-    margin-right: 15px;
-    font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
   }
 `;
 
@@ -67,27 +71,27 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-  background-color: #2E1F13;
+  background-color: #2e1f13;
   color: white;
-  border: 1px solid #5A4B3F;
+  border: 1px solid #5a4b3f;
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 14px;
   transition: border-color 0.2s ease;
-  
+
   &:focus {
     outline: none;
-    border-color: #FFA726;
+    border-color: #ffa726;
     box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.2);
   }
-  
+
   &::placeholder {
     color: #999;
   }
 `;
 
 const ConnectButton = styled.button`
-  background: linear-gradient(135deg, #FFA726 0%, #FF9800 100%);
+  background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -97,16 +101,16 @@ const ConnectButton = styled.button`
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 20px;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 167, 38, 0.3);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   &:disabled {
     background: #555;
     cursor: not-allowed;
@@ -126,9 +130,9 @@ const ErrorMessage = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   &:before {
-    content: '⚠️';
+    content: "⚠️";
     font-size: 16px;
   }
 `;
@@ -144,44 +148,49 @@ const SuccessMessage = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   &:before {
-    content: '✅';
+    content: "✅";
     font-size: 16px;
   }
 `;
 
 function AccessPage({ onConnect }: AccessPageProps): JSX.Element {
   const [formData, setFormData] = useState({
-    host: '',
-    port: '3306',
-    user: '',
-    password: '',
-    database: ''
+    host: "",
+    port: "3306",
+    user: "",
+    password: "",
+    database: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.host || !formData.user || !formData.password || !formData.database) {
-      setError('Please fill in all required fields');
+
+    if (
+      !formData.host ||
+      !formData.user ||
+      !formData.password ||
+      !formData.database
+    ) {
+      setError("Please fill in all required fields");
       return;
     }
 
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     try {
       const config = {
@@ -189,19 +198,20 @@ function AccessPage({ onConnect }: AccessPageProps): JSX.Element {
         port: parseInt(formData.port),
         user: formData.user,
         password: formData.password,
-        database: formData.database
+        database: formData.database,
       };
 
       await databaseAPI.connect(config);
-      setSuccess('Successfully connected to database!');
-      
+      setSuccess("Successfully connected to database!");
+
       // 접속 성공 후 1초 후에 리다이렉트
       setTimeout(() => {
         onConnect();
       }, 1000);
-      
     } catch (error: any) {
-      setError('Failed to connect: ' + (error.response?.data?.message || error.message));
+      setError(
+        "Failed to connect: " + (error.response?.data?.message || error.message)
+      );
     } finally {
       setLoading(false);
     }
@@ -210,7 +220,10 @@ function AccessPage({ onConnect }: AccessPageProps): JSX.Element {
   return (
     <Container>
       <AccessCard>
-        <Title>BoarDB</Title>
+        <Title>
+          <img src={process.env.PUBLIC_URL + "/logo.png"} alt="BoarDB logo" />
+          BoarDB
+        </Title>
         <Subtitle>
           Connect to your MySQL database to access the BoarDB dashboard
         </Subtitle>
@@ -279,7 +292,7 @@ function AccessPage({ onConnect }: AccessPageProps): JSX.Element {
           </FormGroup>
 
           <ConnectButton type="submit" disabled={loading}>
-            {loading ? '⏳ Connecting...' : '🔗 Connect to Database'}
+            {loading ? "⏳ Connecting..." : "🔗 Connect to Database"}
           </ConnectButton>
         </Form>
       </AccessCard>

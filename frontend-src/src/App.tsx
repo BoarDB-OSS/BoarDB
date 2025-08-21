@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import styled from "styled-components";
 import MetricsView from "./components/MetricsView";
 import DatabaseView from "./components/DatabaseView";
@@ -51,10 +59,11 @@ const Logo = styled.div`
   color: white;
   margin-right: 50px;
 
-  &:before {
-    content: "🗄️";
+  img {
+    width: 28px;
+    height: 28px;
     margin-right: 10px;
-    font-size: 24px;
+    object-fit: contain;
   }
 `;
 
@@ -495,8 +504,12 @@ function AppContent(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (!checkingConnection && !dbConnected && location.pathname !== '/access') {
-      navigate('/access');
+    if (
+      !checkingConnection &&
+      !dbConnected &&
+      location.pathname !== "/access"
+    ) {
+      navigate("/access");
     }
   }, [checkingConnection, dbConnected, location.pathname, navigate]);
 
@@ -513,7 +526,7 @@ function AppContent(): JSX.Element {
 
   const handleConnect = () => {
     setDbConnected(true);
-    navigate('/');
+    navigate("/");
   };
 
   useEffect(() => {
@@ -710,10 +723,13 @@ function AppContent(): JSX.Element {
   };
 
   // /access 페이지일 때는 헤더 없이 표시
-  if (location.pathname === '/access') {
+  if (location.pathname === "/access") {
     return (
       <Routes>
-        <Route path="/access" element={<AccessPage onConnect={handleConnect} />} />
+        <Route
+          path="/access"
+          element={<AccessPage onConnect={handleConnect} />}
+        />
       </Routes>
     );
   }
@@ -721,56 +737,104 @@ function AppContent(): JSX.Element {
   return (
     <Container>
       <Header>
-        <Logo>BoarDB</Logo>
+        <Logo>
+          <img src={process.env.PUBLIC_URL + "/logo.png"} alt="BoarDB logo" />
+          BoarDB
+        </Logo>
         <NavTabs>
-            <NavTab
-              to="/"
-              active={currentPath === "/"}
-              onClick={() => setCurrentPath("/")}
-            >
-              Dashboard
-            </NavTab>
-            <NavTab
-              to="/database"
-              active={currentPath === "/database"}
-              onClick={() => setCurrentPath("/database")}
-            >
-              Database
-            </NavTab>
-            <NavTab
-              to="/api-usage"
-              active={currentPath === "/api-usage"}
-              onClick={() => setCurrentPath("/api-usage")}
-            >
-              API Usage
-            </NavTab>
-          </NavTabs>
-        </Header>
+          <NavTab
+            to="/"
+            active={currentPath === "/"}
+            onClick={() => setCurrentPath("/")}
+          >
+            Dashboard
+          </NavTab>
+          <NavTab
+            to="/database"
+            active={currentPath === "/database"}
+            onClick={() => setCurrentPath("/database")}
+          >
+            Database
+          </NavTab>
+          <NavTab
+            to="/api-usage"
+            active={currentPath === "/api-usage"}
+            onClick={() => setCurrentPath("/api-usage")}
+          >
+            API Usage
+          </NavTab>
+        </NavTabs>
+      </Header>
 
-        <Routes>
-          <Route path="/" element={
+      <Routes>
+        <Route
+          path="/"
+          element={
             checkingConnection ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: 'white' }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50vh",
+                  color: "white",
+                }}
+              >
                 <div>🔄 Checking database connection...</div>
               </div>
-            ) : dbConnected ? renderDashboard() : <Navigate to="/access" replace />
-          } />
-          <Route path="/database" element={
+            ) : dbConnected ? (
+              renderDashboard()
+            ) : (
+              <Navigate to="/access" replace />
+            )
+          }
+        />
+        <Route
+          path="/database"
+          element={
             checkingConnection ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: 'white' }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50vh",
+                  color: "white",
+                }}
+              >
                 <div>🔄 Checking database connection...</div>
               </div>
-            ) : dbConnected ? <DatabaseView /> : <Navigate to="/access" replace />
-          } />
-          <Route path="/api-usage" element={
+            ) : dbConnected ? (
+              <DatabaseView />
+            ) : (
+              <Navigate to="/access" replace />
+            )
+          }
+        />
+        <Route
+          path="/api-usage"
+          element={
             checkingConnection ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', color: 'white' }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "50vh",
+                  color: "white",
+                }}
+              >
                 <div>🔄 Checking database connection...</div>
               </div>
-            ) : dbConnected ? <MetricsView /> : <Navigate to="/access" replace />
-          } />
-        </Routes>
-      </Container>
+            ) : dbConnected ? (
+              <MetricsView />
+            ) : (
+              <Navigate to="/access" replace />
+            )
+          }
+        />
+      </Routes>
+    </Container>
   );
 }
 
