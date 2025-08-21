@@ -1,6 +1,6 @@
 {
   "name": "boardb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Developer tool for API monitoring and database management with TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,12 +11,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/baesungjoon/boardb.git"
+    "url": "https://github.com/BoarDB-OSS/BoarDB.git"
   },
   "bugs": {
-    "url": "https://github.com/baesungjoon/boardb/issues"
+    "url": "https://github.com/BoarDB-OSS/BoarDB/issues"
   },
-  "homepage": "https://github.com/baesungjoon/boardb#readme",
+  "homepage": "https://github.com/BoarDB-OSS/BoarDB#readme",
   "scripts": {
     "build": "tsc && npm run build-frontend",
     "build-backend": "tsc",
